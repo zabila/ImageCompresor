@@ -25,7 +25,17 @@ void MyFolderListModel::setFolder(const QString &folder) {
 
 int MyFolderListModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
-    return m_files.count();
+
+    int count = 0;
+
+    for (const QFileInfo &fileInfo: m_files) {
+        QString fileExtension = fileInfo.suffix().toLower();
+        if (fileExtension == "bmp" || fileExtension == "png" || fileExtension == "barch") {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 QHash<int, QByteArray> MyFolderListModel::roleNames() const {
@@ -41,18 +51,27 @@ QVariant MyFolderListModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    const QFileInfo &fileInfo = m_files[index.row()];
-
-    switch (role) {
-        case FileNameRole:
-            return fileInfo.fileName();
-        case FilePathRole:
-            return fileInfo.filePath();
-        case FileExtensionRole:
-            return fileInfo.suffix();
-        case FileSizeRole:
-            return fileInfo.size();
-        default:
-            return QVariant();
+    int filteredRow = 0;
+    for (const QFileInfo &fileInfo: m_files) {
+        QString fileExtension = fileInfo.suffix().toLower();
+        if (fileExtension == "bmp" || fileExtension == "png" || fileExtension == "barch") {
+            if (filteredRow == index.row()) {
+                switch (role) {
+                    case FileNameRole:
+                        return fileInfo.fileName();
+                    case FilePathRole:
+                        return fileInfo.filePath();
+                    case FileExtensionRole:
+                        return fileInfo.suffix();
+                    case FileSizeRole:
+                        return fileInfo.size();
+                    default:
+                        return QVariant();
+                }
+            }
+            filteredRow++;
+        }
     }
+
+    return QVariant();
 }
