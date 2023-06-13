@@ -10,8 +10,12 @@ public:
 
     std::shared_ptr<IDecoder> createDecoder() override;
 
-    void saveToFile(const std::string &filename, const EncodedData &data) const override;
+    void saveEncodedDataToFile(const std::string &filename, const EncodedData &data) const override;
 
-    EncodedData loadFromFile(const std::string &filename) const override;
+    EncodedData loadEncodedDataFromFile(const std::string &filename) const override;
+
+    void saveRawImageToFile(const std::string &filename, const RawImageData &imageData) const override;
+
+    RawImageData loadRawImageFromFile(const std::string &filename) const override;
 
 };

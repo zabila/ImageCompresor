@@ -1,8 +1,15 @@
 #include "MyFolderListModel.h"
+#include "MyRunnable .h"
 
 #include <qdebug.h>
+#include <QThreadPool>
+#include <QStringList>
+
+#include <CompressorFactory.h>
 
 MyFolderListModel::MyFolderListModel(QObject *parent) : QAbstractListModel(parent) {
+    connect(this, &MyFolderListModel::itemClicked, this, &MyFolderListModel::onItemClicked);
+    initializerCompressor();
 }
 
 QString MyFolderListModel::folder() const {
@@ -17,7 +24,10 @@ void MyFolderListModel::setFolder(const QString &folder) {
 
     beginResetModel();
     m_directory = QDir(folder);
-    m_files = m_directory.entryInfoList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+    m_files = m_directory.entryInfoList(QStringList() << "*.bmp" << "*.png" << "*.barch", QDir::Files);
+    for (int i = 0; i < m_files.size(); ++i) {
+        m_encodingStatusList.append("");
+    }
     endResetModel();
 
     emit folderChanged();
@@ -67,7 +77,7 @@ QVariant MyFolderListModel::data(const QModelIndex &index, int role) const {
                     case FileSizeRole:
                         return fileInfo.size();
                     case FileEncodingStatusRole:
-                        return "";
+                        return m_encodingStatusList.at(index.row());
                     default:
                         return QVariant();
                 }
@@ -77,4 +87,79 @@ QVariant MyFolderListModel::data(const QModelIndex &index, int role) const {
     }
 
     return QVariant();
+}
+
+bool MyFolderListModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if (data(index, role) != value) {
+        switch (role) {
+            case FileEncodingStatusRole:
+                m_encodingStatusList.replace(index.row(), value.toString());
+                break;
+        }
+
+        emit dataChanged(index, index, QVector<int>() << role);
+        return true;
+    }
+    return false;
+}
+
+void MyFolderListModel::onItemClicked(int index) {
+    qDebug() << "Item clicked:" << index;
+
+    QRunnable *task = new MyRunnable([this, index]() {
+
+        QString absoluteFilePath = data(this->index(index), FilePathRole).toString();
+        QString fileName = data(this->index(index), FileNameRole).toString();
+        QString filePath = data(this->index(index), FilePathRole).toString();
+        QString fileExtension = data(this->index(index), FileExtensionRole).toString();
+
+        if (fileExtension == "bmp") {
+            QMetaObject::invokeMethod(this, "updateData",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, index),
+                                      Q_ARG(QString, "Encoding"));
+
+            auto rawData = m_compressor->loadRawImageFromFile(filePath.toStdString());
+            auto encodedData = m_encoder->encode(rawData);
+            m_compressor->saveEncodedDataToFile(
+                    absoluteFilePath.toStdString() + fileName.toStdString() + "_packed.barch",
+                    encodedData);
+
+            QMetaObject::invokeMethod(this, "updateData",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, index),
+                                      Q_ARG(QString, ""));
+
+        } else if (fileExtension == "barch") {
+
+            QMetaObject::invokeMethod(this, "updateData",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, index),
+                                      Q_ARG(QString, "Decoding"));
+
+            auto encodedData = m_compressor->loadEncodedDataFromFile(filePath.toStdString());
+            auto rawData = m_decoder->decode(encodedData);
+            m_compressor->saveRawImageToFile(
+                    absoluteFilePath.toStdString() + fileName.toStdString() + "_unpacked.bmp",
+                    rawData);
+
+            QMetaObject::invokeMethod(this, "updateData",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, index),
+                                      Q_ARG(QString, ""));
+        }
+    });
+    QThreadPool::globalInstance()->start(task);
+}
+
+void MyFolderListModel::initializerCompressor() {
+    CompressorFactory factory;
+    m_compressor = factory.createCompressor();
+    m_encoder = m_compressor->createEncoder();
+    m_decoder = m_compressor->createDecoder();
+
+}
+
+void MyFolderListModel::updateData(int index, const QString &newValue) {
+    setData(this->index(index), newValue, FileEncodingStatusRole);
 }

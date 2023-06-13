@@ -146,9 +146,7 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        if (fileDelegate.containsMouse) {
-                            root.currentIndex = index
-                        }
+                        myFolderModel.itemClicked(index)
                     }
                 }
             }
