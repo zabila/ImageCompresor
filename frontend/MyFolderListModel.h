@@ -21,6 +21,8 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    QHash<int, QByteArray> roleNames() const override;
+
     QString folder() const;
 
     void setFolder(const QString &folder);

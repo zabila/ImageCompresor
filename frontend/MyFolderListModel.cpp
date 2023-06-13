@@ -28,6 +28,15 @@ int MyFolderListModel::rowCount(const QModelIndex &parent) const {
     return m_files.count();
 }
 
+QHash<int, QByteArray> MyFolderListModel::roleNames() const {
+    QHash<int, QByteArray> roles;
+    roles[FileNameRole] = "fileName";
+    roles[FilePathRole] = "filePath";
+    roles[FileExtensionRole] = "fileExtension";
+    roles[FileSizeRole] = "fileSize";
+    return roles;
+}
+
 QVariant MyFolderListModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();

@@ -23,7 +23,7 @@ ApplicationWindow {
 
             Text {
                 anchors.right: parent.right
-                text: fileExtension + " | " +  fileSize
+                text: fileExtension + " | " + fileSize
             }
         }
     }
