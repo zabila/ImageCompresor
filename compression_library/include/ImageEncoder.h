@@ -4,8 +4,10 @@
 #include "EncodedData.h"
 #include "RawImageData.h"
 
+#include <vector>
+
 class ImageEncoder : public IEncoder
 {
 public:
-    EncodedData encode(const RawImageData& data) override;
+    EncodedData encode(const RawImageData& rawImageData) override;
 };

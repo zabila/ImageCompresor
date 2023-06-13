@@ -4,8 +4,7 @@
 #include "EncodedData.h"
 #include "RawImageData.h"
 
-class ImageDecoder : public IDecoder
-{
+class ImageDecoder : public IDecoder {
 public:
-    RawImageData decode(const EncodedData& data) override;
+    RawImageData decode(const EncodedData &encodedData) override;
 };

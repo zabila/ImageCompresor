@@ -7,5 +7,5 @@ struct IEncoder
 {
     virtual EncodedData encode(const RawImageData& data) = 0;
 
-    virtual ~IEncoder() {}
+    virtual ~IEncoder() = default;
 };
