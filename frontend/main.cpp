@@ -1,37 +1,41 @@
-#include "CompressorFactory.h"
-#include "EncodedData.h"
-#include "ICompressor.h"
-#include "ImageEncoder.h"
-#include "ImageDecoder.h"
-#include "RawImageData.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QCommandLineParser>
+#include <QQmlContext>
+#include <QDir>
+#include "MyFolderListModel.h"
 
-#include <memory>
-#include <iostream>
 
 int main(int argc, char *argv[]) {
-    try {
-        std::vector<unsigned char> imageData{0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01};
-        RawImageData image{12, 1, imageData};
+    QGuiApplication app(argc, argv);
+    QCoreApplication::setApplicationName("Image Compressor");
+    QCoreApplication::setApplicationVersion("1.0");
+    QQmlApplicationEngine engine;
 
-        CompressorFactory factory;
-        std::shared_ptr<ICompressor> compressor = factory.createCompressor();
-        std::shared_ptr<IEncoder> encoder = compressor->createEncoder();
-        std::shared_ptr<IDecoder> decoder = compressor->createDecoder();
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Helper");
+    parser.addHelpOption();
+    parser.addVersionOption();
 
-        EncodedData encodedData = encoder->encode(image);
-        RawImageData decodedImage = decoder->decode(encodedData);
+    QCommandLineOption targetDirectoryOption(QStringList() << "d" << "directory",
+                                             QCoreApplication::translate("main",
+                                                                         "start from directory path <directory>."),
+                                             QCoreApplication::translate("main", "directory"));
+    parser.addOption(targetDirectoryOption);
+    parser.process(app);
 
-        compressor->saveToFile("test.barch", encodedData);
-        EncodedData loadedData = compressor->loadFromFile("test.barch");
 
-        RawImageData decodedFromFile = decoder->decode(loadedData);
+    MyFolderListModel folderModelWrapper;
+    QString directory = parser.values(targetDirectoryOption).value(0);
+    if (directory.isEmpty() || !QDir(directory).exists())
+        directory = QDir::currentPath();
+    folderModelWrapper.setFolder(directory);
 
-        std::cout << "End!";
-    }
-    catch (const std::exception &e) {
-        std::cout << "Caught exception: " << e.what() << '\n';
-        return 1;  // Indicate failure
-    }
+    engine.rootContext()->setContextProperty("myFolderModel", &folderModelWrapper);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-    return 0;
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    return app.exec();
 }
