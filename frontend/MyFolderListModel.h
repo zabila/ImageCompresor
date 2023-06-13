@@ -14,7 +14,8 @@ public:
         FileNameRole = Qt::UserRole + 1,
         FilePathRole,
         FileExtensionRole,
-        FileSizeRole
+        FileSizeRole,
+        FileEncodingStatusRole,
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

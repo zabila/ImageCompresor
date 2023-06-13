@@ -44,6 +44,7 @@ QHash<int, QByteArray> MyFolderListModel::roleNames() const {
     roles[FilePathRole] = "filePath";
     roles[FileExtensionRole] = "fileExtension";
     roles[FileSizeRole] = "fileSize";
+    roles[FileEncodingStatusRole] = "fileEncodingStatus";
     return roles;
 }
 
@@ -65,6 +66,8 @@ QVariant MyFolderListModel::data(const QModelIndex &index, int role) const {
                         return fileInfo.suffix();
                     case FileSizeRole:
                         return fileInfo.size();
+                    case FileEncodingStatusRole:
+                        return "";
                     default:
                         return QVariant();
                 }

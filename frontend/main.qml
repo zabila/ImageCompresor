@@ -9,7 +9,7 @@ ApplicationWindow {
     height: 400
     visible: true
 
-    Column {
+ Column {
         anchors.fill: parent
 
         Rectangle {
@@ -20,28 +20,53 @@ ApplicationWindow {
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: 10
                 spacing: 10
 
                 Text {
                     text: "File Name"
                     font.pixelSize: 15
                     Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width * 0.4
                     horizontalAlignment: Text.AlignHCenter
+                }
+
+                Rectangle {
+                    width: 1
+                    color: "black"
+                    Layout.preferredHeight: parent.height
                 }
 
                 Text {
                     text: "Extension"
                     font.pixelSize: 15
-                    width: 50
+                    Layout.preferredWidth: parent.width * 0.2
                     horizontalAlignment: Text.AlignHCenter
+                }
+
+                Rectangle {
+                    width: 1
+                    color: "black"
+                    Layout.preferredHeight: parent.height
                 }
 
                 Text {
                     text: "Size"
                     font.pixelSize: 15
-                    width: 100
-                    horizontalAlignment: Text.AlignRight
+                    Layout.preferredWidth: parent.width * 0.2
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                Rectangle {
+                    width: 1
+                    color: "black"
+                    Layout.preferredHeight: parent.height
+                }
+
+                Text {
+                    text: "Status"
+                    font.pixelSize: 15
+                    Layout.preferredWidth: parent.width * 0.2
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
         }
@@ -63,7 +88,6 @@ ApplicationWindow {
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 10
                     spacing: 10
 
                     Text {
@@ -71,29 +95,61 @@ ApplicationWindow {
                         text: model.fileName
                         font.pixelSize: 15
                         Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width * 0.4
+                        horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: 1
+                        color: "black"
+                        Layout.preferredHeight: parent.height
                     }
 
                     Text {
                         id: fileExtension
                         text: model.fileExtension
                         font.pixelSize: 15
-                        width: 50
+                        Layout.preferredWidth: parent.width * 0.2
                         horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Rectangle {
+                        width: 1
+                        color: "black"
+                        Layout.preferredHeight: parent.height
                     }
 
                     Text {
                         id: fileSize
                         text: model.fileSize
                         font.pixelSize: 15
-                        width: 100
-                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: parent.width * 0.2
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Rectangle {
+                        width: 1
+                        color: "black"
+                        Layout.preferredHeight: parent.height
+                    }
+
+                    Text {
+                        id: encodingStatus
+                        text: model.fileEncodingStatus
+                        font.pixelSize: 15
+                        Layout.preferredWidth: parent.width * 0.2
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: fileDelegate.color = "lightblue"
+                    onClicked: {
+                        if (fileDelegate.containsMouse) {
+                            root.currentIndex = index
+                        }
+                    }
                 }
             }
         }
