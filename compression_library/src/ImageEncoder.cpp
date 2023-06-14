@@ -17,8 +17,11 @@ EncodedData ImageEncoder::encode(const RawImageData &rawImageData) {
     const int totalRows = rawImageData.height;
     const int totalColumns = rawImageData.width;
 
-    auto &encodedEmptyIndexes = encodedData.emptyIndexes;
-    auto &encodedCompressedData = encodedData.data;
+    std::vector<char> encodedEmptyIndexes;
+    encodedEmptyIndexes.reserve(totalRows);
+
+    std::vector<unsigned char> encodedCompressedData;
+    encodedCompressedData.reserve(totalRows * (totalColumns / COMPRESS_THRESHOLD));
 
     for (int currentRow = 0; currentRow < totalRows; ++currentRow) {
 
@@ -48,8 +51,10 @@ EncodedData ImageEncoder::encode(const RawImageData &rawImageData) {
                 encodedCompressedData.insert(encodedCompressedData.end(), groupBegin, groupEnd);
             }
         }
-
     }
+
+    encodedData.emptyIndexes = std::move(encodedEmptyIndexes);
+    encodedData.data = std::move(encodedCompressedData);
 
     return encodedData;
 }

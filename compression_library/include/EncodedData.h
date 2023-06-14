@@ -9,6 +9,6 @@ const int COMPRESS_THRESHOLD = 4;
 struct EncodedData {
     int width;
     int height;
-    std::vector<bool> emptyIndexes;
+    std::vector<char> emptyIndexes;
     std::vector<unsigned char> data;
 };

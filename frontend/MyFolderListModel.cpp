@@ -114,6 +114,7 @@ void MyFolderListModel::onItemClicked(int index) {
         QString fileExtension = data(this->index(index), FileExtensionRole).toString();
 
         if (fileExtension == "bmp") {
+            qDebug() << "BMP file:" << absoluteFilePath;
             QMetaObject::invokeMethod(this, "updateData",
                                       Qt::QueuedConnection,
                                       Q_ARG(int, index),
@@ -132,6 +133,7 @@ void MyFolderListModel::onItemClicked(int index) {
 
         } else if (fileExtension == "barch") {
 
+            qDebug() << "BARCH file:" << absoluteFilePath;
             QMetaObject::invokeMethod(this, "updateData",
                                       Qt::QueuedConnection,
                                       Q_ARG(int, index),
@@ -161,5 +163,6 @@ void MyFolderListModel::initializerCompressor() {
 }
 
 void MyFolderListModel::updateData(int index, const QString &newValue) {
+    qDebug() << "Update data:" << index << newValue;
     setData(this->index(index), newValue, FileEncodingStatusRole);
 }
