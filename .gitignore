@@ -10,8 +10,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-#Clion
 /.idea
-
-#VSCode
 .vscode
+.cache
+build
+

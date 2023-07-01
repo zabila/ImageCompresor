@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "Debug",
+      "description": "Debug configuration",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE ": "C:/Users/wzabi/scoop/apps/vcpkg/current/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "Release",
+      "description": "Release configuration",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE ": "C:/Users/wzabi/scoop/apps/vcpkg/current/scripts/buildsystems/vcpkg.cmake"
+      }
+    }
+  ]
+}

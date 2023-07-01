@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
-
+cmake_minimum_required(VERSION 3.22)
 project(ImageCompressor)
 
 add_subdirectory(compression_library)
