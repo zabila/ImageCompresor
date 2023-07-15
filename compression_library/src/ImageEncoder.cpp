@@ -2,78 +2,84 @@
 #include "EncodedData.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <stdexcept>
 #include <vector>
 
-EncodedData ImageEncoder::encode(const RawImageData& rawImageData)
+EncodedData ImageEncoder::encode(const RawImageData& raw_image_data)
 {
-    if (!rawImageData.isValid())
-    {
+    if (!raw_image_data.isValid())
         throw std::invalid_argument("Invalid raw image data");
-    }
 
-    EncodedData encodedData;
-    encodedData.width = rawImageData.width;
-    encodedData.height = rawImageData.height;
+    EncodedData encoded_data(raw_image_data);
 
-    const std::vector<unsigned char>& data = rawImageData.data;
-    const int totalRows = rawImageData.height;
-    const int totalColumns = rawImageData.width;
+    const std::vector<unsigned char>& raw_data = raw_image_data.data;
+    const std::size_t total_row = raw_image_data.height;
+    const std::size_t total_column = raw_image_data.width;
 
-    std::vector<char> encodedEmptyIndexes;
-    encodedEmptyIndexes.reserve(totalRows);
+    std::vector<char> encoded_empty_row;
+    encoded_empty_row.reserve(total_row);
 
-    std::vector<unsigned char> encodedCompressedData;
-    encodedCompressedData.reserve(totalRows * (totalColumns / COMPRESS_THRESHOLD));
+    std::vector<unsigned char> encoded_compressed_data;
+    encoded_compressed_data.reserve(total_row * (total_column / COMPRESS_THRESHOLD));
 
-    for (int currentRow = 0; currentRow < totalRows; ++currentRow)
+    for (std::size_t current_row = 0; current_row < total_row; ++current_row)
     {
-        const int rowIndexInData = currentRow * totalColumns;
-        if (rowIndexInData >= data.size())
-        {
-            throw std::out_of_range("Out of range error in raw image data");
-        }
+        const int row_index_data = current_row * total_column;
+        if (row_index_data >= raw_data.size())
+            throw std::out_of_range("row_index_data out of range error in raw image data");
 
-        const auto rowBegin = std::next(data.begin(), rowIndexInData);
-        const auto rowEnd = std::next(rowBegin, totalColumns);
+        const auto row_begin = std::next(raw_data.begin(), row_index_data);
+        if (row_begin == raw_data.end())
+            throw std::out_of_range("row_begin out of range error in raw image data");
 
-        const bool isEmptyRow = std::all_of(rowBegin, rowEnd, [](unsigned char pixel) {
+        const auto row_end = std::next(row_begin, total_column);
+        if (row_end == raw_data.end())
+            throw std::out_of_range("row_data out of range error in raw image data");
+
+        const bool is_empty_row = std::all_of(row_begin, row_end, [](unsigned char pixel) {
             return pixel == WHITE;
         });
 
-        encodedEmptyIndexes.push_back(isEmptyRow);
-        if (isEmptyRow)
-        {
+        encoded_empty_row.push_back(is_empty_row);
+        if (is_empty_row)
             continue;
-        }
 
-        for (int currentColumn = 0; currentColumn < totalColumns; currentColumn += COMPRESS_THRESHOLD)
+        for (std::size_t current_column = 0; current_column < total_column; current_column += COMPRESS_THRESHOLD)
         {
-            const auto groupBegin = std::next(rowBegin, currentColumn);
-            const auto groupEnd = std::next(groupBegin, COMPRESS_THRESHOLD);
+            const auto group_begin = std::next(row_begin, current_column);
+            if (group_begin == row_end)
+                throw std::out_of_range("group_begin out of range error in raw image data");
 
-            if (std::all_of(groupBegin, groupEnd, [](unsigned char pixel) {
-                    return pixel == WHITE;
-                }))
+            const auto group_end = std::next(group_begin, COMPRESS_THRESHOLD);
+            if (group_end == row_end)
+                throw std::out_of_range("group_begin out of range error in raw image data");
+
+            const bool is_white_group = std::all_of(group_begin, group_end, [](unsigned char pixel) {
+                return pixel == WHITE;
+            });
+            if (is_white_group)
             {
-                encodedCompressedData.push_back(0);
+                encoded_compressed_data.push_back(0);
+                continue;
             }
-            else if (std::all_of(groupBegin, groupEnd, [](unsigned char pixel) {
-                         return pixel == BLACK;
-                     }))
+
+            const bool is_black_group = std::all_of(group_begin, group_end, [](unsigned char pixel) {
+                return pixel == BLACK;
+            });
+            if (is_black_group)
             {
-                encodedCompressedData.push_back(10);
+                encoded_compressed_data.push_back(10);
+                continue;
             }
-            else
-            {
-                encodedCompressedData.push_back(11);
-                encodedCompressedData.insert(encodedCompressedData.end(), groupBegin, groupEnd);
-            }
+
+            encoded_compressed_data.push_back(11);
+            encoded_compressed_data.insert(encoded_compressed_data.end(), group_begin, group_end);
         }
     }
 
-    encodedData.emptyIndexes = std::move(encodedEmptyIndexes);
-    encodedData.data = std::move(encodedCompressedData);
+    encoded_data.emptyIndexes = std::move(encoded_empty_row);
+    encoded_data.data = std::move(encoded_compressed_data);
 
-    return encodedData;
+    return encoded_data;
 }

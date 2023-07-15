@@ -1,27 +1,31 @@
 {
-  "version": 3,
-  "configurePresets": [
-    {
-      "name": "Debug",
-      "description": "Debug configuration",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_TOOLCHAIN_FILE ": "C:/Users/wzabi/scoop/apps/vcpkg/current/scripts/buildsystems/vcpkg.cmake"
-      }
-    },
-    {
-      "name": "Release",
-      "description": "Release configuration",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_TOOLCHAIN_FILE ": "C:/Users/wzabi/scoop/apps/vcpkg/current/scripts/buildsystems/vcpkg.cmake"
-      }
-    }
-  ]
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "Debug",
+            "description": "Debug configuration",
+            "generator": "CodeBlocks - MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_DEPENDS_USE_COMPILER": "FALSE",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "E:/Qt/Tools/mingw810_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "E:/Qt/Tools/mingw810_64/bin/g++.exe"
+            }
+        },
+        {
+            "name": "Release",
+            "description": "Release configuration",
+            "generator": "CodeBlocks - MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_DEPENDS_USE_COMPILER": "FALSE",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "E:/Qt/Tools/mingw810_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "E:/Qt/Tools/mingw810_64/bin/g++.exe"
+            }
+        }
+    ]
 }

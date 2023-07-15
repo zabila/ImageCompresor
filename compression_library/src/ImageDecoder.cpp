@@ -3,16 +3,16 @@
 #include <stdexcept>
 #include <vector>
 
-RawImageData ImageDecoder::decode(const EncodedData& encodedData)
+RawImageData ImageDecoder::decode(const EncodedData& encoded_data)
 {
-    RawImageData rawImageData;
-    rawImageData.width = encodedData.width;
-    rawImageData.height = encodedData.height;
+    RawImageData raw_image_data;
+    raw_image_data.width = encoded_data.width;
+    raw_image_data.height = encoded_data.height;
 
-    const auto& encodedEmptyIndexes = encodedData.emptyIndexes;
-    const auto& encodedCompressedData = encodedData.data;
-    const int totalRows = encodedData.height;
-    const int totalColumns = encodedData.width;
+    const auto& encodedEmptyIndexes = encoded_data.emptyIndexes;
+    const auto& encodedCompressedData = encoded_data.data;
+    const int totalRows = encoded_data.height;
+    const int totalColumns = encoded_data.width;
 
     auto encodedDataIterator = encodedCompressedData.begin();
 
@@ -22,7 +22,7 @@ RawImageData ImageDecoder::decode(const EncodedData& encodedData)
         {
             for (int i = 0; i < totalColumns; ++i)
             {
-                rawImageData.data.push_back(WHITE);
+                raw_image_data.data.push_back(WHITE);
             }
             continue;
         }
@@ -49,9 +49,9 @@ RawImageData ImageDecoder::decode(const EncodedData& encodedData)
                 throw std::invalid_argument("Invalid encoded group value");
             }
 
-            rawImageData.data.insert(rawImageData.data.end(), group.begin(), group.end());
+            raw_image_data.data.insert(raw_image_data.data.end(), group.begin(), group.end());
         }
     }
 
-    return rawImageData;
+    return raw_image_data;
 }

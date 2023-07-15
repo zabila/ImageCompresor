@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstddef>
 #include <vector>
 #include <ostream>
 
 struct RawImageData
 {
-    int width;
-    int height;
+    std::size_t width;
+    std::size_t height;
     std::vector<unsigned char> data;
 
     /**
