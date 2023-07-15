@@ -9,25 +9,25 @@ RawImageData ImageDecoder::decode(const EncodedData& encoded_data)
     raw_image_data.width = encoded_data.width;
     raw_image_data.height = encoded_data.height;
 
-    const auto& encodedEmptyIndexes = encoded_data.emptyIndexes;
-    const auto& encodedCompressedData = encoded_data.data;
-    const int totalRows = encoded_data.height;
-    const int totalColumns = encoded_data.width;
+    const auto& encoded_empty_indexes = encoded_data.emptyIndexes;
+    const auto& encoded_compress_data = encoded_data.data;
+    const int total_row = encoded_data.height;
+    const int total_collum = encoded_data.width;
 
-    auto encodedDataIterator = encodedCompressedData.begin();
+    auto encodedDataIterator = encoded_compress_data.begin();
 
-    for (int currentRow = 0; currentRow < totalRows; ++currentRow)
+    for (int currentRow = 0; currentRow < total_row; ++currentRow)
     {
-        if (encodedEmptyIndexes[currentRow])
+        if (encoded_empty_indexes[currentRow])
         {
-            for (int i = 0; i < totalColumns; ++i)
+            for (int i = 0; i < total_collum; ++i)
             {
                 raw_image_data.data.push_back(WHITE);
             }
             continue;
         }
 
-        for (int currentColumn = 0; currentColumn < totalColumns; currentColumn += COMPRESS_THRESHOLD)
+        for (int currentColumn = 0; currentColumn < total_collum; currentColumn += COMPRESS_THRESHOLD)
         {
             unsigned char encodedGroup = *encodedDataIterator++;
             std::vector<unsigned char> group;
