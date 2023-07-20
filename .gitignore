@@ -1,4 +1,4 @@
-CMakeLists.txt.user
+kCMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -15,3 +15,6 @@ _deps
 
 #VSCode
 .vscode
+
+.cache
+cmake_build*

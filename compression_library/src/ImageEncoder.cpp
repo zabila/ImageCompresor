@@ -1,10 +1,11 @@
 #include "ImageEncoder.h"
 #include "EncodedData.h"
 
-#include <stdexcept>
 #include <algorithm>
+#include <stdexcept>
 
-EncodedData ImageEncoder::encode(const RawImageData &rawImageData) {
+EncodedData ImageEncoder::encode(const RawImageData& rawImageData)
+{
     if (!rawImageData.isValid()) {
         throw std::invalid_argument("Invalid raw image data");
     }
@@ -13,7 +14,7 @@ EncodedData ImageEncoder::encode(const RawImageData &rawImageData) {
     encodedData.width = rawImageData.width;
     encodedData.height = rawImageData.height;
 
-    const auto &data = rawImageData.data;
+    const auto& data = rawImageData.data;
     const int totalRows = rawImageData.height;
     const int totalColumns = rawImageData.width;
 
@@ -24,7 +25,6 @@ EncodedData ImageEncoder::encode(const RawImageData &rawImageData) {
     encodedCompressedData.reserve(totalRows * (totalColumns / COMPRESS_THRESHOLD));
 
     for (int currentRow = 0; currentRow < totalRows; ++currentRow) {
-
         const int rowIndexInData = currentRow * totalColumns;
         if (rowIndexInData >= data.size()) {
             throw std::out_of_range("Out of range error in raw image data");
