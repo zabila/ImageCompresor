@@ -19,11 +19,6 @@ int main(int argc, char* argv[])
         QCoreApplication::setApplicationVersion("1.0");
         QQmlApplicationEngine engine;
 
-        QCommandLineParser parser;
-        parser.setApplicationDescription("Helper");
-        parser.addHelpOption();
-        parser.addVersionOption();
-
         QCommandLineOption targetDirectoryOption(QStringList() << "d"
                                                                << "directory",
             QCoreApplication::translate("main", "start from directory path <directory>."), QCoreApplication::translate("main", "directory"));
