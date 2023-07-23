@@ -10,7 +10,60 @@
 
 void process_file(const QCommandLineParser& parser, const QCommandLineOption& file_option);
 
-int main(int argc, char* argv[]) { }
+int main(int argc, char* argv[])
+{
+    QGuiApplication app(argc, argv);
+    try
+    {
+        QCoreApplication::setApplicationName("Image Compressor");
+        QCoreApplication::setApplicationVersion("1.0");
+        QQmlApplicationEngine engine;
+
+        QCommandLineParser parser;
+        parser.setApplicationDescription("Helper");
+        parser.addHelpOption();
+        parser.addVersionOption();
+
+        QCommandLineOption targetDirectoryOption(QStringList() << "d"
+                                                               << "directory",
+            QCoreApplication::translate("main", "start from directory path <directory>."), QCoreApplication::translate("main", "directory"));
+        parser.addOption(targetDirectoryOption);
+
+        QCommandLineOption targetFileOption(QStringList() << "f"
+                                                          << "file",
+            QCoreApplication::translate("main", "start from file path <file>."), QCoreApplication::translate("main", "file"));
+
+        parser.addOption(targetFileOption);
+
+        parser.process(app);
+
+        const bool isSetFileOption = parser.isSet(targetFileOption);
+
+        if (isSetFileOption)
+        {
+            process_file(parser, targetFileOption);
+            return 0;
+        }
+
+        MyFolderListModel folderModelWrapper;
+        QString directory = parser.values(targetDirectoryOption).value(0);
+        if (directory.isEmpty() || !QDir(directory).exists())
+            directory = QDir::currentPath();
+        folderModelWrapper.setFolder(directory);
+
+        engine.rootContext()->setContextProperty("myFolderModel", &folderModelWrapper);
+        engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+        if (engine.rootObjects().isEmpty())
+            return -1;
+
+        return app.exec();
+
+    } catch (...)
+    {
+        std::cout << "Exception occurred" << std::endl;
+    }
+}
 
 void process_file(const QCommandLineParser& parser, const QCommandLineOption& file_option)
 {
