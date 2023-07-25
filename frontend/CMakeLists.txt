@@ -15,9 +15,10 @@ file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h")
 
 include_directories(${CMAKE_SOURCE_DIR}/CompressionLibrary/include)
+include_directories(${CMAKE_SOURCE_DIR}/utility)
 file(GLOB_RECURSE QML_FILES "*.qml")
 qt5_add_resources(QRC_SOURCES "qml.qrc")
 
 add_executable(${PROJECT_NAME} ${QML_FILES} ${QRC_SOURCES} ${HEADERS} ${SOURCES} main.cpp)
 
-target_link_libraries(${PROJECT_NAME} CompressionLibrary Qt5::Core Qt5::Quick)
+target_link_libraries(${PROJECT_NAME} CompressionLibrary Utility Qt5::Core Qt5::Quick)

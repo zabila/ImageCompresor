@@ -7,14 +7,19 @@
 #include <qcommandlineoption.h>
 #include "ImageCompressor.h"
 #include "MyFolderListModel.h"
+#include <QLoggingCategory>
+#include "Logger.h"
 
 void process_file(const QCommandLineParser& parser, const QCommandLineOption& file_option);
 
 int main(int argc, char* argv[])
 {
-    QGuiApplication app(argc, argv);
+    g_logger = new LoggerImpl("log.txt");
+    QLoggingCategory::setFilterRules("*.info=true");
     try
     {
+        Log(INFO) << "Start project";
+        QGuiApplication app(argc, argv);
         QCoreApplication::setApplicationName("Image Compressor");
         QCoreApplication::setApplicationVersion("1.0");
         QQmlApplicationEngine engine;
@@ -41,8 +46,13 @@ int main(int argc, char* argv[])
 
         if (isSetFileOption)
         {
+            Log(INFO) << "Found file optionns";
             process_file(parser, targetFileOption);
             return 0;
+        }
+        else
+        {
+            Log(WARNING) << "File don't found";
         }
 
         MyFolderListModel folderModelWrapper;
@@ -62,7 +72,10 @@ int main(int argc, char* argv[])
     } catch (...)
     {
         std::cout << "Exception occurred" << std::endl;
+        Log(FATAL) << "Exception occurred";
     }
+    delete g_logger;
+    g_logger = nullptr;
 }
 
 void process_file(const QCommandLineParser& parser, const QCommandLineOption& file_option)
