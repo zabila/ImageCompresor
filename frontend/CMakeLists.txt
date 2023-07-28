@@ -14,7 +14,7 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h")
 
-include_directories(${CMAKE_SOURCE_DIR}/CompressionLibrary/include)
+include_directories(${CMAKE_SOURCE_DIR}/compression_library/include)
 include_directories(${CMAKE_SOURCE_DIR}/utility)
 file(GLOB_RECURSE QML_FILES "*.qml")
 qt5_add_resources(QRC_SOURCES "qml.qrc")

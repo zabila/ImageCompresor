@@ -3,12 +3,16 @@ cmake_minimum_required(VERSION 3.20)
 project(CompressionLibrary)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "include/*.h")
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+include_directories(${CMAKE_SOURCE_DIR}/utility)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include Utility)
+add_library(${PROJECT_NAME} STATIC ${HEADERS} ${SOURCES})
 
-#TODO: HERE SHOULD BE ADD TESTS IN FUTURE
-#add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} Utility Qt5::Core )

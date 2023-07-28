@@ -69,10 +69,9 @@ int main(int argc, char* argv[])
 
         return app.exec();
 
-    } catch (...)
+    } catch (std::exception& ext)
     {
-        std::cout << "Exception occurred" << std::endl;
-        Log(FATAL) << "Exception occurred";
+        Log(FATAL) << "Exception: " << ext.what();
     }
     delete g_logger;
     g_logger = nullptr;
@@ -83,22 +82,22 @@ void process_file(const QCommandLineParser& parser, const QCommandLineOption& fi
     const QString q_file_from_option = parser.values(file_option).value(0);
     if (q_file_from_option.isEmpty() || !QFile(q_file_from_option).exists())
     {
-        qDebug() << "File not found";
+        Log(FATAL) << "File don't exists or empty";
         return;
     }
 
     const QFileInfo q_file_info(q_file_from_option);
     const QString q_full_file_path = q_file_info.absoluteFilePath();
 
-    qDebug() << "File found: " << q_full_file_path;
-
     std::unique_ptr<ImageCompressor> compresor = std::make_unique<ImageCompressor>();
     std::shared_ptr<IEncoder> encoder = compresor->createEncoder();
 
     const std::string file_full_path = q_full_file_path.toStdString();
+    Log(INFO) << "File found: " << file_full_path;
+
     const RawImageData imange_data = compresor->loadRawImageFromFile(file_full_path);
 
-    qDebug() << "Image data loaded: " << imange_data.width << "x" << imange_data.height << "x";
+    Log(INFO) << "Image data loaded: " << imange_data.width << "x" << imange_data.height << "x";
 
     encoder->encode(imange_data);
 }

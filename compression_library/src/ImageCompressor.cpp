@@ -1,10 +1,10 @@
 #include "ImageCompressor.h"
-
+#include "Logger.h"
 #include "ImageEncoder.h"
 #include "ImageDecoder.h"
 
 #include <fstream>
-#include <BMPHeader .h>
+#include <BMPHeader.h>
 
 std::shared_ptr<IEncoder> ImageCompressor::createEncoder()
 {
@@ -113,9 +113,7 @@ void ImageCompressor::saveRawImageToFile(const std::string& filename, const RawI
     header.importantColors = 0;
 
     file.write(reinterpret_cast<const char*>(&header), sizeof(BMPHeader));
-
     file.write(reinterpret_cast<const char*>(imageData.data.data()), imageData.data.size());
-
     file.close();
 }
 
@@ -127,6 +125,25 @@ RawImageData ImageCompressor::loadRawImageFromFile(const std::string& filename) 
     }
 
     std::ifstream file(filename, std::ios::binary);
+
+    int size = 0, pixels_adress = 0, width = 0, height = 0;
+    short int bits_per_pixel = 0;
+    file.seekg(2, std::ios::beg);
+    file.read((char*)&size, sizeof(int));
+    file.seekg(10, std::ios::beg);
+    file.read((char*)&pixels_adress, sizeof(int));
+    file.seekg(18, std::ios::beg);
+    file.read((char*)&width, sizeof(int));
+    file.read((char*)&height, sizeof(int));
+    file.seekg(28, std::ios::beg);
+    file.read((char*)&bits_per_pixel, sizeof(short int));
+    file.seekg(pixels_adress, std::ios::beg);
+
+    Log(INFO) << "Size:" << size;
+    Log(INFO) << "pixels_adress:" << pixels_adress;
+    Log(INFO) << "bits per pixel:" << bits_per_pixel;
+    Log(INFO) << "Width:" << width;
+    Log(INFO) << "Height:" << height;
 
     if (!file)
     {
@@ -151,6 +168,8 @@ RawImageData ImageCompressor::loadRawImageFromFile(const std::string& filename) 
     rawImageData.width = header.width;
     rawImageData.height = header.height;
     rawImageData.data = std::move(imageData);
+
+    Log(INFO) << "Loaded file " << rawImageData;
 
     return rawImageData;
 }
